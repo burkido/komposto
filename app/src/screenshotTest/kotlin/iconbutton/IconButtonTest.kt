@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.android.tools.screenshot.PreviewTest
 import com.trendyol.design.core.annotation.ExperimentalKompostoApi
 import com.trendyol.design.core.icon.KPIcons
 import com.trendyol.design.core.icon.icons.fill.Help
@@ -26,18 +28,323 @@ import com.trendyol.design.core.iconbutton.standard.KPStandardIconButtonSize
 import com.trendyol.design.core.iconbutton.standard.KPStandardIconToggleButton
 import com.trendyol.design.core.text.KPText
 import core.BoxWithHorizontalPadding
-import core.DesignScreenshotTest
+import core.DesignScreenshot
+import core.DesignScreenshotPreview
 import core.DesignScreenshotTestContainer
-import org.junit.Test
 
-internal class IconButtonTest : DesignScreenshotTest() {
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun containedIconButtonSizeTest() = DesignScreenshot(
+    testName = "containedIconButtonSizeTest",
+    contents = listOf(
+        DesignScreenshotTestContainer("Small") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPContainedIconButton(
+                        icon = KPIcons.Fill.Share,
+                        size = KPContainedIconButtonSize.Small,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Small")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Medium") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPContainedIconButton(
+                        icon = KPIcons.Fill.Share,
+                        size = KPContainedIconButtonSize.Medium,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Medium")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Large") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPContainedIconButton(
+                        icon = KPIcons.Fill.Share,
+                        size = KPContainedIconButtonSize.Large,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Large")
+                }
+            }
+        }
+    )
+)
 
-    @Test
-    fun containedIconButtonSizeTest() = runScreenShotTest(
-        testName = "containedIconButtonSizeTest",
-        contents = listOf(
-            DesignScreenshotTestContainer("Small") {
-                BoxWithHorizontalPadding {
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun containedIconButtonStateTest() = DesignScreenshot(
+    testName = "containedIconButtonStateTest",
+    contents = listOf(
+        DesignScreenshotTestContainer("Enabled") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPContainedIconButton(
+                        icon = KPIcons.Fill.Share,
+                        size = KPContainedIconButtonSize.Medium,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Enabled")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Disabled") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPContainedIconButton(
+                        icon = KPIcons.Fill.Share,
+                        size = KPContainedIconButtonSize.Medium,
+                        onClick = { },
+                        enabled = false
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Disabled")
+                }
+            }
+        }
+    )
+)
+
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun containedIconToggleButtonTest() = DesignScreenshot(
+    testName = "containedIconToggleButtonTest",
+    contents = listOf(
+        DesignScreenshotTestContainer("Unchecked") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPContainedIconToggleButton(
+                        checked = false,
+                        checkedIcon = KPIcons.Fill.SaveSelected,
+                        unCheckedIcon = KPIcons.Outline.SaveUnselected,
+                        size = KPContainedIconButtonSize.Medium,
+                        onCheckedChange = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Unchecked")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Checked") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPContainedIconToggleButton(
+                        checked = true,
+                        checkedIcon = KPIcons.Fill.SaveSelected,
+                        unCheckedIcon = KPIcons.Outline.SaveUnselected,
+                        size = KPContainedIconButtonSize.Medium,
+                        onCheckedChange = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Checked")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Disabled") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPContainedIconToggleButton(
+                        checked = false,
+                        checkedIcon = KPIcons.Fill.SaveSelected,
+                        unCheckedIcon = KPIcons.Outline.SaveUnselected,
+                        size = KPContainedIconButtonSize.Medium,
+                        onCheckedChange = { },
+                        enabled = false
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Disabled")
+                }
+            }
+        }
+    )
+)
+
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun standardIconButtonSizeTest() = DesignScreenshot(
+    testName = "standardIconButtonSizeTest",
+    contents = listOf(
+        DesignScreenshotTestContainer("XSmall") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconButton(
+                        icon = KPIcons.Fill.Help,
+                        size = KPStandardIconButtonSize.XSmall,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("XSmall")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Small") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconButton(
+                        icon = KPIcons.Fill.Help,
+                        size = KPStandardIconButtonSize.Small,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Small")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Medium") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconButton(
+                        icon = KPIcons.Fill.Help,
+                        size = KPStandardIconButtonSize.Medium,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Medium")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Large") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconButton(
+                        icon = KPIcons.Fill.Help,
+                        size = KPStandardIconButtonSize.Large,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Large")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("XLarge") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconButton(
+                        icon = KPIcons.Fill.Help,
+                        size = KPStandardIconButtonSize.XLarge,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("XLarge")
+                }
+            }
+        }
+    )
+)
+
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun standardIconButtonStateTest() = DesignScreenshot(
+    testName = "standardIconButtonStateTest",
+    contents = listOf(
+        DesignScreenshotTestContainer("Enabled") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconButton(
+                        icon = KPIcons.Fill.Help,
+                        size = KPStandardIconButtonSize.Medium,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Enabled")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Disabled") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconButton(
+                        icon = KPIcons.Fill.Help,
+                        size = KPStandardIconButtonSize.Medium,
+                        onClick = { },
+                        enabled = false
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Disabled")
+                }
+            }
+        }
+    )
+)
+
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun standardIconToggleButtonTest() = DesignScreenshot(
+    testName = "standardIconToggleButtonTest",
+    contents = listOf(
+        DesignScreenshotTestContainer("Unchecked") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconToggleButton(
+                        checked = false,
+                        checkedIcon = KPIcons.Fill.PlayButton,
+                        unCheckedIcon = KPIcons.Fill.PauseButton,
+                        size = KPStandardIconButtonSize.Medium,
+                        onCheckedChange = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Unchecked")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Checked") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconToggleButton(
+                        checked = true,
+                        checkedIcon = KPIcons.Fill.PlayButton,
+                        unCheckedIcon = KPIcons.Fill.PauseButton,
+                        size = KPStandardIconButtonSize.Medium,
+                        onCheckedChange = { }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Checked")
+                }
+            }
+        },
+        DesignScreenshotTestContainer("Disabled") {
+            BoxWithHorizontalPadding {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    KPStandardIconToggleButton(
+                        checked = false,
+                        checkedIcon = KPIcons.Fill.PlayButton,
+                        unCheckedIcon = KPIcons.Fill.PauseButton,
+                        size = KPStandardIconButtonSize.Medium,
+                        onCheckedChange = { },
+                        enabled = false
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    KPText("Disabled")
+                }
+            }
+        }
+    )
+)
+
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun multipleIconButtonsTest() = DesignScreenshot(
+    testName = "multipleIconButtonsTest",
+    contents = listOf(
+        DesignScreenshotTestContainer("Contained Buttons") {
+            BoxWithHorizontalPadding {
+                Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KPContainedIconButton(
                             icon = KPIcons.Fill.Share,
@@ -47,10 +354,7 @@ internal class IconButtonTest : DesignScreenshotTest() {
                         Spacer(modifier = Modifier.width(8.dp))
                         KPText("Small")
                     }
-                }
-            },
-            DesignScreenshotTestContainer("Medium") {
-                BoxWithHorizontalPadding {
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KPContainedIconButton(
                             icon = KPIcons.Fill.Share,
@@ -60,10 +364,7 @@ internal class IconButtonTest : DesignScreenshotTest() {
                         Spacer(modifier = Modifier.width(8.dp))
                         KPText("Medium")
                     }
-                }
-            },
-            DesignScreenshotTestContainer("Large") {
-                BoxWithHorizontalPadding {
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KPContainedIconButton(
                             icon = KPIcons.Fill.Share,
@@ -75,102 +376,10 @@ internal class IconButtonTest : DesignScreenshotTest() {
                     }
                 }
             }
-        )
-    )
-
-    @Test
-    fun containedIconButtonStateTest() = runScreenShotTest(
-        testName = "containedIconButtonStateTest",
-        contents = listOf(
-            DesignScreenshotTestContainer("Enabled") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPContainedIconButton(
-                            icon = KPIcons.Fill.Share,
-                            size = KPContainedIconButtonSize.Medium,
-                            onClick = { }
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Enabled")
-                    }
-                }
-            },
-            DesignScreenshotTestContainer("Disabled") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPContainedIconButton(
-                            icon = KPIcons.Fill.Share,
-                            size = KPContainedIconButtonSize.Medium,
-                            onClick = { },
-                            enabled = false
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Disabled")
-                    }
-                }
-            }
-        )
-    )
-
-    @Test
-    fun containedIconToggleButtonTest() = runScreenShotTest(
-        testName = "containedIconToggleButtonTest",
-        contents = listOf(
-            DesignScreenshotTestContainer("Unchecked") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPContainedIconToggleButton(
-                            checked = false,
-                            checkedIcon = KPIcons.Fill.SaveSelected,
-                            unCheckedIcon = KPIcons.Outline.SaveUnselected,
-                            size = KPContainedIconButtonSize.Medium,
-                            onCheckedChange = { }
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Unchecked")
-                    }
-                }
-            },
-            DesignScreenshotTestContainer("Checked") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPContainedIconToggleButton(
-                            checked = true,
-                            checkedIcon = KPIcons.Fill.SaveSelected,
-                            unCheckedIcon = KPIcons.Outline.SaveUnselected,
-                            size = KPContainedIconButtonSize.Medium,
-                            onCheckedChange = { }
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Checked")
-                    }
-                }
-            },
-            DesignScreenshotTestContainer("Disabled") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPContainedIconToggleButton(
-                            checked = false,
-                            checkedIcon = KPIcons.Fill.SaveSelected,
-                            unCheckedIcon = KPIcons.Outline.SaveUnselected,
-                            size = KPContainedIconButtonSize.Medium,
-                            onCheckedChange = { },
-                            enabled = false
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Disabled")
-                    }
-                }
-            }
-        )
-    )
-
-    @Test
-    fun standardIconButtonSizeTest() = runScreenShotTest(
-        testName = "standardIconButtonSizeTest",
-        contents = listOf(
-            DesignScreenshotTestContainer("XSmall") {
-                BoxWithHorizontalPadding {
+        },
+        DesignScreenshotTestContainer("Standard Buttons") {
+            BoxWithHorizontalPadding {
+                Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KPStandardIconButton(
                             icon = KPIcons.Fill.Help,
@@ -180,10 +389,7 @@ internal class IconButtonTest : DesignScreenshotTest() {
                         Spacer(modifier = Modifier.width(8.dp))
                         KPText("XSmall")
                     }
-                }
-            },
-            DesignScreenshotTestContainer("Small") {
-                BoxWithHorizontalPadding {
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KPStandardIconButton(
                             icon = KPIcons.Fill.Help,
@@ -193,10 +399,7 @@ internal class IconButtonTest : DesignScreenshotTest() {
                         Spacer(modifier = Modifier.width(8.dp))
                         KPText("Small")
                     }
-                }
-            },
-            DesignScreenshotTestContainer("Medium") {
-                BoxWithHorizontalPadding {
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KPStandardIconButton(
                             icon = KPIcons.Fill.Help,
@@ -206,10 +409,7 @@ internal class IconButtonTest : DesignScreenshotTest() {
                         Spacer(modifier = Modifier.width(8.dp))
                         KPText("Medium")
                     }
-                }
-            },
-            DesignScreenshotTestContainer("Large") {
-                BoxWithHorizontalPadding {
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KPStandardIconButton(
                             icon = KPIcons.Fill.Help,
@@ -219,10 +419,7 @@ internal class IconButtonTest : DesignScreenshotTest() {
                         Spacer(modifier = Modifier.width(8.dp))
                         KPText("Large")
                     }
-                }
-            },
-            DesignScreenshotTestContainer("XLarge") {
-                BoxWithHorizontalPadding {
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         KPStandardIconButton(
                             icon = KPIcons.Fill.Help,
@@ -234,190 +431,6 @@ internal class IconButtonTest : DesignScreenshotTest() {
                     }
                 }
             }
-        )
+        }
     )
-
-    @Test
-    fun standardIconButtonStateTest() = runScreenShotTest(
-        testName = "standardIconButtonStateTest",
-        contents = listOf(
-            DesignScreenshotTestContainer("Enabled") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPStandardIconButton(
-                            icon = KPIcons.Fill.Help,
-                            size = KPStandardIconButtonSize.Medium,
-                            onClick = { }
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Enabled")
-                    }
-                }
-            },
-            DesignScreenshotTestContainer("Disabled") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPStandardIconButton(
-                            icon = KPIcons.Fill.Help,
-                            size = KPStandardIconButtonSize.Medium,
-                            onClick = { },
-                            enabled = false
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Disabled")
-                    }
-                }
-            }
-        )
-    )
-
-    @Test
-    fun standardIconToggleButtonTest() = runScreenShotTest(
-        testName = "standardIconToggleButtonTest",
-        contents = listOf(
-            DesignScreenshotTestContainer("Unchecked") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPStandardIconToggleButton(
-                            checked = false,
-                            checkedIcon = KPIcons.Fill.PlayButton,
-                            unCheckedIcon = KPIcons.Fill.PauseButton,
-                            size = KPStandardIconButtonSize.Medium,
-                            onCheckedChange = { }
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Unchecked")
-                    }
-                }
-            },
-            DesignScreenshotTestContainer("Checked") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPStandardIconToggleButton(
-                            checked = true,
-                            checkedIcon = KPIcons.Fill.PlayButton,
-                            unCheckedIcon = KPIcons.Fill.PauseButton,
-                            size = KPStandardIconButtonSize.Medium,
-                            onCheckedChange = { }
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Checked")
-                    }
-                }
-            },
-            DesignScreenshotTestContainer("Disabled") {
-                BoxWithHorizontalPadding {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        KPStandardIconToggleButton(
-                            checked = false,
-                            checkedIcon = KPIcons.Fill.PlayButton,
-                            unCheckedIcon = KPIcons.Fill.PauseButton,
-                            size = KPStandardIconButtonSize.Medium,
-                            onCheckedChange = { },
-                            enabled = false
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        KPText("Disabled")
-                    }
-                }
-            }
-        )
-    )
-
-    @Test
-    fun multipleIconButtonsTest() = runScreenShotTest(
-        testName = "multipleIconButtonsTest",
-        contents = listOf(
-            DesignScreenshotTestContainer("Contained Buttons") {
-                BoxWithHorizontalPadding {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            KPContainedIconButton(
-                                icon = KPIcons.Fill.Share,
-                                size = KPContainedIconButtonSize.Small,
-                                onClick = { }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            KPText("Small")
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            KPContainedIconButton(
-                                icon = KPIcons.Fill.Share,
-                                size = KPContainedIconButtonSize.Medium,
-                                onClick = { }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            KPText("Medium")
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            KPContainedIconButton(
-                                icon = KPIcons.Fill.Share,
-                                size = KPContainedIconButtonSize.Large,
-                                onClick = { }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            KPText("Large")
-                        }
-                    }
-                }
-            },
-            DesignScreenshotTestContainer("Standard Buttons") {
-                BoxWithHorizontalPadding {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            KPStandardIconButton(
-                                icon = KPIcons.Fill.Help,
-                                size = KPStandardIconButtonSize.XSmall,
-                                onClick = { }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            KPText("XSmall")
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            KPStandardIconButton(
-                                icon = KPIcons.Fill.Help,
-                                size = KPStandardIconButtonSize.Small,
-                                onClick = { }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            KPText("Small")
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            KPStandardIconButton(
-                                icon = KPIcons.Fill.Help,
-                                size = KPStandardIconButtonSize.Medium,
-                                onClick = { }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            KPText("Medium")
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            KPStandardIconButton(
-                                icon = KPIcons.Fill.Help,
-                                size = KPStandardIconButtonSize.Large,
-                                onClick = { }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            KPText("Large")
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            KPStandardIconButton(
-                                icon = KPIcons.Fill.Help,
-                                size = KPStandardIconButtonSize.XLarge,
-                                onClick = { }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            KPText("XLarge")
-                        }
-                    }
-                }
-            }
-        )
-    )
-}
+)

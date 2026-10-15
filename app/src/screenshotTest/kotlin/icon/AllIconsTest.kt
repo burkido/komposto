@@ -1,7 +1,11 @@
 package icon
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.android.tools.screenshot.PreviewTest
 import com.trendyol.design.core.icon.KPIcon
 import com.trendyol.design.core.icon.KPIconSize
 import com.trendyol.design.core.icon.KPIcons
@@ -38,119 +42,109 @@ import com.trendyol.design.core.icon.icons.fill.Tick
 import com.trendyol.design.core.icon.icons.fill.Trash
 import com.trendyol.design.core.icon.icons.outline.*
 import core.BoxWithHorizontalPadding
-import core.DesignScreenshotTest
+import core.DesignScreenshot
+import core.DesignScreenshotPreview
 import core.DesignScreenshotTestContainer
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
-internal class AllIconsTest(
-    private val iconName: String,
-    private val icon: ImageVector,
-) : DesignScreenshotTest() {
+class NamedIcon(val name: String, val icon: ImageVector) {
+    override fun toString(): String = name
+}
 
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters
-        fun data() = listOf(
-            arrayOf("ArrowDown", KPIcons.Fill.ArrowDown),
-            arrayOf("Basket", KPIcons.Fill.Basket),
-            arrayOf("Bullet", KPIcons.Fill.Bullet),
-            arrayOf("Campaign", KPIcons.Fill.Campaign),
-            arrayOf("CampaignDownArrow", KPIcons.Fill.CampaignDownArrow),
-            arrayOf("Cancel", KPIcons.Fill.Cancel),
-            arrayOf("Cargo", KPIcons.Fill.Cargo),
-            arrayOf("CircleIcon", KPIcons.Fill.CircleIcon),
-            arrayOf("Colon", KPIcons.Fill.Colon),
-            arrayOf("Coupon", KPIcons.Fill.Coupon),
-            arrayOf("Credit", KPIcons.Fill.Credit),
-            arrayOf("Delivery", KPIcons.Fill.Delivery),
-            arrayOf("FavoriteSelected", KPIcons.Fill.FavoriteSelected),
-            arrayOf("FenomenGradient", KPIcons.Fill.FenomenGradient),
-            arrayOf("Help", KPIcons.Fill.Help),
-            arrayOf("InfoIcon", KPIcons.Fill.InfoIcon),
-            arrayOf("PauseButton", KPIcons.Fill.PauseButton),
-            arrayOf("Percentage", KPIcons.Fill.Percentage),
-            arrayOf("PlayButton", KPIcons.Fill.PlayButton),
-            arrayOf("PlayGradient", KPIcons.Fill.PlayGradient),
-            arrayOf("RunningOut", KPIcons.Fill.RunningOut),
-            arrayOf("SaveSelected", KPIcons.Fill.SaveSelected),
-            arrayOf("Search", KPIcons.Fill.Search),
-            arrayOf("Share", KPIcons.Fill.Share),
-            arrayOf("Star", KPIcons.Fill.Star),
-            arrayOf("StateOrder", KPIcons.Fill.StateOrder),
-            arrayOf("StatePin", KPIcons.Fill.StatePin),
-            arrayOf("StateRefresh", KPIcons.Fill.StateRefresh),
-            arrayOf("Tick", KPIcons.Fill.Tick),
-            arrayOf("Trash", KPIcons.Fill.Trash),
-            arrayOf("WarningInfoStateDefaultIcon", KPIcons.Fill.StateWarningInfoDefault),
-            arrayOf("Back", KPIcons.Outline.Back),
-            arrayOf("Cancel", KPIcons.Outline.Cancel),
-            arrayOf("Chevron", KPIcons.Outline.Chevron),
-            arrayOf("ErrorState", KPIcons.Outline.ErrorState),
-            arrayOf("FavoriteUnselected", KPIcons.Outline.FavoriteUnselected),
-            arrayOf("Info", KPIcons.Outline.Info),
-            arrayOf("SaveUnselected", KPIcons.Outline.SaveUnselected),
-            arrayOf("StateCaution", KPIcons.Outline.StateCaution),
-            arrayOf("SuccessState", KPIcons.Outline.SuccessState),
-            arrayOf("Union", KPIcons.Outline.Union),
-        )
-    }
+class AllIconsProvider : PreviewParameterProvider<NamedIcon> {
+    override val values: Sequence<NamedIcon> = sequenceOf(
+        NamedIcon("ArrowDown", KPIcons.Fill.ArrowDown),
+        NamedIcon("Basket", KPIcons.Fill.Basket),
+        NamedIcon("Bullet", KPIcons.Fill.Bullet),
+        NamedIcon("Campaign", KPIcons.Fill.Campaign),
+        NamedIcon("CampaignDownArrow", KPIcons.Fill.CampaignDownArrow),
+        NamedIcon("Cancel", KPIcons.Fill.Cancel),
+        NamedIcon("Cargo", KPIcons.Fill.Cargo),
+        NamedIcon("CircleIcon", KPIcons.Fill.CircleIcon),
+        NamedIcon("Colon", KPIcons.Fill.Colon),
+        NamedIcon("Coupon", KPIcons.Fill.Coupon),
+        NamedIcon("Credit", KPIcons.Fill.Credit),
+        NamedIcon("Delivery", KPIcons.Fill.Delivery),
+        NamedIcon("FavoriteSelected", KPIcons.Fill.FavoriteSelected),
+        NamedIcon("FenomenGradient", KPIcons.Fill.FenomenGradient),
+        NamedIcon("Help", KPIcons.Fill.Help),
+        NamedIcon("InfoIcon", KPIcons.Fill.InfoIcon),
+        NamedIcon("PauseButton", KPIcons.Fill.PauseButton),
+        NamedIcon("Percentage", KPIcons.Fill.Percentage),
+        NamedIcon("PlayButton", KPIcons.Fill.PlayButton),
+        NamedIcon("PlayGradient", KPIcons.Fill.PlayGradient),
+        NamedIcon("RunningOut", KPIcons.Fill.RunningOut),
+        NamedIcon("SaveSelected", KPIcons.Fill.SaveSelected),
+        NamedIcon("Search", KPIcons.Fill.Search),
+        NamedIcon("Share", KPIcons.Fill.Share),
+        NamedIcon("Star", KPIcons.Fill.Star),
+        NamedIcon("StateOrder", KPIcons.Fill.StateOrder),
+        NamedIcon("StatePin", KPIcons.Fill.StatePin),
+        NamedIcon("StateRefresh", KPIcons.Fill.StateRefresh),
+        NamedIcon("Tick", KPIcons.Fill.Tick),
+        NamedIcon("Trash", KPIcons.Fill.Trash),
+        NamedIcon("WarningInfoStateDefaultIcon", KPIcons.Fill.StateWarningInfoDefault),
+        NamedIcon("Back", KPIcons.Outline.Back),
+        NamedIcon("Cancel", KPIcons.Outline.Cancel),
+        NamedIcon("Chevron", KPIcons.Outline.Chevron),
+        NamedIcon("ErrorState", KPIcons.Outline.ErrorState),
+        NamedIcon("FavoriteUnselected", KPIcons.Outline.FavoriteUnselected),
+        NamedIcon("Info", KPIcons.Outline.Info),
+        NamedIcon("SaveUnselected", KPIcons.Outline.SaveUnselected),
+        NamedIcon("StateCaution", KPIcons.Outline.StateCaution),
+        NamedIcon("SuccessState", KPIcons.Outline.SuccessState),
+        NamedIcon("Union", KPIcons.Outline.Union),
+    )
+}
 
-    @Test
-    fun iconTest() {
-        val testName = "$iconName Icon Tests"
-        val contents = iconContainers(icon, Color.Unspecified)
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun iconTest(@PreviewParameter(AllIconsProvider::class) icon: NamedIcon) = DesignScreenshot(
+    testName = "${icon.name} Icon Tests",
+    contents = iconContainers(icon.icon, Color.Unspecified),
+)
 
-        runScreenShotTest(
-            testName = testName,
-            contents = contents
-        )
-    }
-
-    private fun iconContainers(icon: ImageVector, tint: Color): List<DesignScreenshotTestContainer> {
-        return listOf(
-            DesignScreenshotTestContainer("XXSmall") {
-                BoxWithHorizontalPadding {
-                    KPIcon(imageVector = icon, size = KPIconSize.XXSmall, tint = tint)
-                }
-            },
-            DesignScreenshotTestContainer("XSmall") {
-                BoxWithHorizontalPadding {
-                    KPIcon(imageVector = icon, size = KPIconSize.XSmall, tint = tint)
-                }
-            },
-            DesignScreenshotTestContainer("Small") {
-                BoxWithHorizontalPadding {
-                    KPIcon(imageVector = icon, size = KPIconSize.Small, tint = tint)
-                }
-            },
-            DesignScreenshotTestContainer("Medium") {
-                BoxWithHorizontalPadding {
-                    KPIcon(imageVector = icon, size = KPIconSize.Medium, tint = tint)
-                }
-            },
-            DesignScreenshotTestContainer("Large") {
-                BoxWithHorizontalPadding {
-                    KPIcon(imageVector = icon, size = KPIconSize.Large, tint = tint)
-                }
-            },
-            DesignScreenshotTestContainer("XLarge") {
-                BoxWithHorizontalPadding {
-                    KPIcon(imageVector = icon, size = KPIconSize.XLarge, tint = tint)
-                }
-            },
-            DesignScreenshotTestContainer("XXLarge") {
-                BoxWithHorizontalPadding {
-                    KPIcon(imageVector = icon, size = KPIconSize.XXLarge, tint = tint)
-                }
-            },
-            DesignScreenshotTestContainer("XXXLarge") {
-                BoxWithHorizontalPadding {
-                    KPIcon(imageVector = icon, size = KPIconSize.XXXLarge, tint = tint)
-                }
+private fun iconContainers(icon: ImageVector, tint: Color): List<DesignScreenshotTestContainer> {
+    return listOf(
+        DesignScreenshotTestContainer("XXSmall") {
+            BoxWithHorizontalPadding {
+                KPIcon(imageVector = icon, size = KPIconSize.XXSmall, tint = tint)
             }
-        )
-    }
+        },
+        DesignScreenshotTestContainer("XSmall") {
+            BoxWithHorizontalPadding {
+                KPIcon(imageVector = icon, size = KPIconSize.XSmall, tint = tint)
+            }
+        },
+        DesignScreenshotTestContainer("Small") {
+            BoxWithHorizontalPadding {
+                KPIcon(imageVector = icon, size = KPIconSize.Small, tint = tint)
+            }
+        },
+        DesignScreenshotTestContainer("Medium") {
+            BoxWithHorizontalPadding {
+                KPIcon(imageVector = icon, size = KPIconSize.Medium, tint = tint)
+            }
+        },
+        DesignScreenshotTestContainer("Large") {
+            BoxWithHorizontalPadding {
+                KPIcon(imageVector = icon, size = KPIconSize.Large, tint = tint)
+            }
+        },
+        DesignScreenshotTestContainer("XLarge") {
+            BoxWithHorizontalPadding {
+                KPIcon(imageVector = icon, size = KPIconSize.XLarge, tint = tint)
+            }
+        },
+        DesignScreenshotTestContainer("XXLarge") {
+            BoxWithHorizontalPadding {
+                KPIcon(imageVector = icon, size = KPIconSize.XXLarge, tint = tint)
+            }
+        },
+        DesignScreenshotTestContainer("XXXLarge") {
+            BoxWithHorizontalPadding {
+                KPIcon(imageVector = icon, size = KPIconSize.XXXLarge, tint = tint)
+            }
+        }
+    )
 }

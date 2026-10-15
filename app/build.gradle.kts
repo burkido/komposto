@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("komposto.application")
 }
@@ -7,6 +9,20 @@ android {
 
     defaultConfig {
         applicationId = "com.trendyol.design"
+    }
+
+    testOptions {
+        // Host-side Compose Preview screenshot tests (Layoutlib), sources in src/screenshotTest/kotlin.
+        screenshotTests.create("screenshotTest") {
+            engineVersion = libs.versions.screenshotEngine.get()
+            targetVariants.add("debug")
+
+            dependencies {
+                implementation(project.dependencies.platform(libs.androidxComposeBOM))
+                implementation(libs.androidxComposeUiTooling)
+                implementation(libs.screenshotValidationApi)
+            }
+        }
     }
 }
 
@@ -40,4 +56,23 @@ dependencies {
     androidTestImplementation(libs.androidxTestRunner)
     androidTestImplementation(libs.androidxTestRules)
     debugImplementation(libs.androidxComposeUiTestManifest)
+}
+
+// TrendyolTheme reads Locale.getDefault(), so pin the screenshot JVM's locale and time zone to keep
+// renders identical across developer machines and CI.
+tasks.withType<Test>().matching { it.name.contains("ScreenshotTest") }.configureEach {
+    systemProperty("user.language", "en")
+    systemProperty("user.country", "US")
+    systemProperty("user.timezone", "UTC")
+    // Gradle loads every suite class while looking for tests, but PreviewParameterProvider
+    // implementations need Compose, which only the renderer's class loader has. The renderer still
+    // loads them for the previews that use them.
+    exclude("**/*Provider.class")
+}
+
+// AGP 9.4.1 gives the screenshot suite the app's classes jar as its Kotlin friend path but compiles it
+// against the class directories, so `internal` app declarations are not visible to the suite. Add the
+// directory the suite actually sees, as androidTest gets.
+tasks.withType<KotlinCompile>().matching { it.name == "compileScreenshotTestHostJarDebugKotlin" }.configureEach {
+    friendPaths.from(tasks.named<KotlinCompile>("compileDebugKotlin").flatMap { it.destinationDirectory })
 }
