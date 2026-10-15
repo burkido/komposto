@@ -1,6 +1,6 @@
 package com.trendyol.design.buildlogic
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.SonatypeHost
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -63,11 +63,9 @@ class PublishConvention : Plugin<Project> {
         }
 
         configure<LibraryExtension> {
-            buildTypes {
-                release {
-                    isMinifyEnabled = false
-                    proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-                }
+            buildTypes.getByName("release").apply {
+                isMinifyEnabled = false
+                proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             }
         }
     }

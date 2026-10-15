@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.androidApplication).apply(false)
     alias(libs.plugins.androidLibrary).apply(false)
     alias(libs.plugins.composeCompiler).apply(false)
-    alias(libs.plugins.jetbrainsKotlinAndroid).apply(false)
     alias(libs.plugins.detekt).apply(false)
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.binaryCompatibilityValidator).apply(true)
@@ -19,7 +18,6 @@ apiValidation {
 
 buildscript {
     dependencies {
-        classpath(libs.shot)
         classpath(libs.kotlinGradlePlugin)
     }
 }

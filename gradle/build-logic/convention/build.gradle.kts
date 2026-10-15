@@ -34,8 +34,8 @@ dependencies {
     implementation(libs.gradleMavenPublishPlugin)
     implementation(libs.detektGradlePlugin)
     implementation(libs.kspGradlePlugin)
-    implementation(libs.shot)
     implementation(libs.dokkaDocumentationPlugin)
     compileOnly(libs.androidGradlePlugin)
     compileOnly(libs.kotlinGradlePlugin)
+    compileOnly(libs.binaryCompatibilityValidatorGradlePlugin)
 }

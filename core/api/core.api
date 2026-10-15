@@ -276,7 +276,7 @@ public final class com/trendyol/design/core/button/ButtonKt {
 public abstract interface class com/trendyol/design/core/button/ButtonSize {
 	public abstract fun getContentPadding ()Landroidx/compose/foundation/layout/PaddingValues;
 	public abstract fun getFont (Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/text/TextStyle;
-	public abstract fun getMinHeight (Landroidx/compose/runtime/Composer;I)F
+	public fun getMinHeight (Landroidx/compose/runtime/Composer;I)F
 }
 
 public final class com/trendyol/design/core/button/ButtonSize$DefaultImpls {
@@ -284,7 +284,7 @@ public final class com/trendyol/design/core/button/ButtonSize$DefaultImpls {
 }
 
 public abstract interface class com/trendyol/design/core/button/ButtonStyle {
-	public abstract fun getBorder-kHDZbjc (FZLandroidx/compose/runtime/Composer;I)Landroidx/compose/foundation/BorderStroke;
+	public fun getBorder-kHDZbjc (FZLandroidx/compose/runtime/Composer;I)Landroidx/compose/foundation/BorderStroke;
 	public abstract fun getButtonColors (Landroidx/compose/runtime/Composer;I)Lcom/trendyol/design/core/button/KPButtonColors;
 }
 

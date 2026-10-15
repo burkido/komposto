@@ -1,12 +1,10 @@
 package com.trendyol.design.buildlogic
 
-import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import com.android.build.api.dsl.ApplicationExtension
 import com.google.devtools.ksp.gradle.KspExtension
-import com.karumi.shot.ShotExtension
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 
 class ApplicationConventionPlugin : Plugin<Project> {
@@ -15,9 +13,7 @@ class ApplicationConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply(pluginId("androidApplication"))
                 apply(pluginId("composeCompiler"))
-                apply(pluginId("jetbrainsKotlinAndroid"))
                 apply(pluginId("detekt"))
-                apply(pluginId("shot"))
                 apply(pluginId("ksp"))
             }
 
@@ -26,19 +22,16 @@ class ApplicationConventionPlugin : Plugin<Project> {
                 add("detektPlugins", libs("detektComposeRules"))
             }
 
-            configure<BaseAppModuleExtension> {
+            configure<ApplicationExtension> {
                 defaultConfig {
-                    testApplicationId = "com.trendyol.design.screenshot.test"
-                    testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
+                    targetSdk = Configs.TARGET_SDK
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                     vectorDrawables {
                         useSupportLibrary = true
                     }
                 }
 
                 buildFeatures.compose = true
-                composeOptions {
-                    kotlinCompilerExtensionVersion = getVersion("kotlin").strictVersion
-                }
 
                 packaging {
                     resources {
@@ -48,11 +41,6 @@ class ApplicationConventionPlugin : Plugin<Project> {
             }
 
             configureAndroid()
-
-            configure<ShotExtension> {
-                applicationId = "com.trendyol.design.screenshot.test"
-                showOnlyFailingTestsInReports = true
-            }
 
             configure<DetektExtension> {
                 buildUponDefaultConfig = true

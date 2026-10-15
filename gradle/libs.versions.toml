@@ -1,18 +1,17 @@
 [versions]
-dokkaPlugin = "2.0.0"
+dokkaPlugin = "2.2.0"
 testCore = "1.7.0"
 testMonitor = "1.7.2"
 testRunner = "1.7.0"
 testRules = "1.7.0"
-shot = '6.1.0'
 coil = '2.7.0'
-showkaseVersion = "1.0.3"
-agp = "8.9.3"
+showkaseVersion = "1.0.5"
+agp = "9.4.1"
 gradleMavenPublishPlugin = "0.32.0"
-kotlin = "2.1.21"
+kotlin = "2.2.21"
 detekt = "1.23.8"
 detektComposeRules = "0.3.20"
-ksp = "2.1.21-2.0.1"
+ksp = "2.3.12"
 binaryCompatibilityValidator = "0.17.0"
 androidxActivity = "1.10.1"
 androidxAppCompat = "1.7.0"
@@ -21,17 +20,16 @@ androidxCore = "1.16.0"
 androidxFragment = "1.8.6"
 androidxLifecycle = "2.9.0"
 androidMaterial = "1.12.0"
+screenshotEngine = "0.0.1-alpha16"
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
 dokkaDocumentationPlugin = { id = "org.jetbrains.dokka", version.ref = "dokkaPlugin" }
-shot = { id = "shot", version.ref = "shot" }
 
 [libraries]
 gradleMavenPublishPlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradleMavenPublishPlugin" }
@@ -68,11 +66,12 @@ detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", v
 detektComposeRules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detektComposeRules" }
 
 dokkaDocumentationPlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokkaPlugin" }
+binaryCompatibilityValidatorGradlePlugin = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
 
-shot = { module = "com.karumi:shot", version.ref = "shot" }
 androidxComposeUiTestJunit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidxComposeUiTestManifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidxTestCore = { module = "androidx.test:core", version.ref = "testCore" }
 androidxTestMonitor = { module = "androidx.test:monitor", version.ref = "testMonitor" }
 androidxTestRunner = { module = "androidx.test:runner", version.ref = "testRunner" }
 androidxTestRules = { module = "androidx.test:rules", version.ref = "testRules" }
+screenshotValidationApi = { module = "com.android.tools.screenshot:screenshot-validation-api", version.ref = "screenshotEngine" }
