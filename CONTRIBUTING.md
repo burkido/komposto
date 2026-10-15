@@ -82,18 +82,21 @@ Thank you for your interest in contributing to Komposto, Trendyol's Android Desi
 ## 🧪 Testing Requirements
 
 ### Required Tests
-- **Screenshot tests** for UI components (using Shot)
+- **Screenshot tests** for UI components (Compose Preview screenshot tests, see the [Screenshot Contribution Guide](SCREENSHOT_CONTRIBUTION_GUIDE.md))
 - **UI tests** for component interactions and behavior
 - **Accessibility tests** when applicable
 - **Performance tests** for performance improvements
 
 ### Running Tests
 ```bash
-# Run screenshot tests
-./gradlew executeScreenshotTests
+# Run screenshot tests (on the JVM, no emulator needed)
+./gradlew :app:testScreenshotTestDefaultDebugTestSuite
 
-# Record new screenshots (after UI changes)
-./gradlew executeScreenshotTests -Precord
+# Render new screenshots (after UI changes)
+./gradlew :app:updateScreenshotTestDefaultDebugTestSuite
+
+# Run interaction tests (needs an emulator or device)
+./gradlew :app:connectedDebugAndroidTest
 
 # Run all checks (tests + linting)
 ./gradlew check
@@ -101,7 +104,7 @@ Thank you for your interest in contributing to Komposto, Trendyol's Android Desi
 
 ### Screenshot Testing Guidelines
 - Screenshot tests must pass on our CI environment
-- Use `./gradlew executeScreenshotTests -Precord` to update screenshots if needed
+- Reference screenshots are generated and committed by CI; use `./gradlew :app:updateScreenshotTestDefaultDebugTestSuite` to check your changes locally
 - Include before/after screenshots in your PR for visual changes
 - Cover different component states (default, focused, disabled, etc.)
 

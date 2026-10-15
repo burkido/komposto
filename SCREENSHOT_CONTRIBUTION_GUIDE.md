@@ -1,12 +1,12 @@
 # UI-Kit Screenshot Rule Sets
 
-### Create an emulator with following configurations in order to align with awilix instances:
-- Pixel 6
-- API 32
+Screenshot tests run on the JVM with Layoutlib (the renderer behind Android Studio's Compose previews) through an AGP screenshot test suite, so no emulator is needed. They live in `app/src/screenshotTest/kotlin/` and every test is a composable annotated with `@PreviewTest`. Reference images are stored in Git LFS under `app/src/screenshotTestDefaultDebug/reference/`.
+
+`@DesignScreenshotPreview` renders each test in a Pixel 6 app window (1080 x 2295 px, 420 dpi) on the default window background.
 
 ## For External Contributors (Fork PRs)
 
-**Important:** Screenshots must always be generated on CI to ensure consistency across different platforms. Never generate screenshots locally!
+**Important:** Reference screenshots are always generated on CI to ensure consistency across different platforms. You can render and check screenshots locally, but don't commit locally generated references.
 
 When your PR fails screenshot tests, you have two options:
 
@@ -16,13 +16,13 @@ When your PR fails screenshot tests, you have two options:
 3. Click **"Run workflow"** button
 4. Select your branch from the dropdown
 5. Click the green **"Run workflow"** button
-6. Wait for the workflow to complete (~5-10 minutes)
+6. Wait for the workflow to complete
 7. Screenshots will be automatically committed to your branch
 8. Your PR will be updated automatically
 
 ### Option 2: Manual Download
 1. Download the `screenshot-test-results` artifact from the failed workflow run
-2. Extract the `app/screenshots/debug/` folder to your local repository
+2. Extract the `app/src/screenshotTestDefaultDebug/reference/` folder to your local repository
 3. Commit and push the screenshots to your branch
 
 ---
@@ -33,6 +33,8 @@ Android Screenshot Test Rule Set:
 **Test name should be meaningful:** Choose a meaningful name that will give information about the purpose and component of your screenshot test.
 **Recommended Name Structure:** ```{ComponentName}_{Property}_{Status}```
 Example: ```Button_Disabled_LargeSize``` or ```Toolbar_WithIcons```
+
+The reference image is named after the `@PreviewTest` function (plus a hash of its preview configuration), so renaming a function or changing its preview annotation means its reference has to be regenerated.
 ### 2. Cover Component Styles
 Test components in different styles. Create a separate test case for each style.
 Example: Test a toolbar in different styles like ```EndIcon, TextButton, None```.
@@ -55,9 +57,8 @@ These tests are especially important for responsive UI.
 Test how components look with different parameters. For example, you can test different combinations of ```text, icon``` or ```backgroundColor``` for a button.
 
 Example: ```Button_WithIcon, Button_WithTextOnly```.
-### 8. Take Screenshots as Test Results
-Don't forget to take screenshots for each component in your tests. Make sure that the screenshot you take is rendered correctly and completely.
-Take a screenshot at the end of the test and save the result to the folder you specified.
+### 8. Check the Rendered Screenshots
+Every `@PreviewTest` function produces one screenshot (one per value when it uses `@PreviewParameter`). Make sure each one is rendered correctly and completely: open it in the IDE preview, or render it with `./gradlew :app:updateScreenshotTestDefaultDebugTestSuite` and look at the generated images.
 ### 9. Write Stateless Tests
 Each test should be independent and should not depend on other tests or the global state. Each test should be able to run on its own.
 
@@ -65,41 +66,44 @@ Tests that rely on a global state make debugging difficult.
 ### 10. Avoid Code Duplication
 Create reusable functions for different states of the same component. This way, you can avoid writing duplicate code.
 
-Example: Using a single function ```runToolbarScreenshotTest``` for a toolbar test with different styles.
+Example: Using a single helper that builds the containers for each variant (like ```iconContainers``` in `AllIconsTest`), or `@PreviewParameter` to render the same test for a list of inputs.
 ### 11. Verify Test Results (Assertion)
-If possible, use assertions to verify that the screenshots you take match expectations. However, this can also mean manual visual inspection, especially during UI changes.
+The test suite compares every render with its reference image and fails on differences. When a change is intentional, check the diff in the HTML report and let CI regenerate the references.
 Scope of Rule Set Sample Test Code:
 kotlin
 
 ```kotlin
-@Test
-fun buttonStatesTest() {
-    runScreenShotTest(
-        testName = "Button_Disabled_SmallSize",
-        contents = listOf(
-            DesignScreenshotTestContainer("DisabledSmall") {
-                Button(
-                    text = "Disabled",
-                    enabled = false,
-                    size = ButtonSize.Small,
-                    onClick = { }
-                )
-            },
-            DesignScreenshotTestContainer("EnabledMedium") {
-                Button(
-                    text = "Enabled",
-                    enabled = true,
-                    size = ButtonSize.Medium,
-                    onClick = { }
-                )
-            }
-        )
+@PreviewTest
+@DesignScreenshotPreview
+@Composable
+fun buttonStatesTest() = DesignScreenshot(
+    testName = "Button_Disabled_SmallSize",
+    contents = listOf(
+        DesignScreenshotTestContainer("DisabledSmall") {
+            Button(
+                text = "Disabled",
+                enabled = false,
+                size = ButtonSize.Small,
+                onClick = { }
+            )
+        },
+        DesignScreenshotTestContainer("EnabledMedium") {
+            Button(
+                text = "Enabled",
+                enabled = true,
+                size = ButtonSize.Medium,
+                onClick = { }
+            )
+        }
     )
-}
+)
 ```
 
 This rule set covers the basic points to be considered when writing screenshot tests for components and guides test writers.
 
 *Gradle Commands:*
-- **Screenshot Test Execution:** ./gradlew executeScreenshotTests
-- **Test Execution for a specific test class:** ./gradlew executeScreenshotTests -Pandroid.testInstrumentationRunnerArguments.class=text.TextWeightTest
+- **Verify screenshots against the references:** ./gradlew :app:testScreenshotTestDefaultDebugTestSuite
+- **Render (record) the reference images:** ./gradlew :app:updateScreenshotTestDefaultDebugTestSuite
+- **Report:** app/build/reports/tests/testScreenshotTestDefaultDebugTestSuite/index.html
+
+Verifying locally needs the real reference images, so install Git LFS and run `git lfs pull` first; without LFS the references are only pointer files.

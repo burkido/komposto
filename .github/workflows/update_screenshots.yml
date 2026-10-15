@@ -36,61 +36,20 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v4
 
-      - name: AVD cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-32
-
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 32
-          arch: x86_64
-          profile: pixel_6
-          target: google_apis
-          avd-name: ubuntu-avd-x86_64-32
-          emulator-boot-timeout: 120
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
-
       - name: Clear old screenshots
-        run: rm -rf app/screenshots/debug/
+        run: rm -rf app/src/screenshotTestDefaultDebug/reference/
 
       - name: Generate new screenshots
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 32
-          arch: x86_64
-          profile: pixel_6
-          target: google_apis
-          avd-name: ubuntu-avd-x86_64-32
-          emulator-boot-timeout: 120
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: ./gradlew executeScreenshotTests -Precord
+        run: ./gradlew :app:updateScreenshotTestDefaultDebugTestSuite
 
       - name: Commit and push screenshots
         run: |
           git config --local user.email "ci@github.actions.com"
           git config --local user.name "GitHub Actions"
-          git add app/screenshots/debug/
+          git add app/src/screenshotTestDefaultDebug/reference/
           if git diff --staged --quiet; then
             echo "No screenshot changes detected"
           else
@@ -104,5 +63,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: generated-screenshots
-          path: app/screenshots/debug/
+          path: app/src/screenshotTestDefaultDebug/reference/
           retention-days: 7
