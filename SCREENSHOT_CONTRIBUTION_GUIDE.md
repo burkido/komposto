@@ -58,7 +58,7 @@ Test how components look with different parameters. For example, you can test di
 
 Example: ```Button_WithIcon, Button_WithTextOnly```.
 ### 8. Check the Rendered Screenshots
-Every `@PreviewTest` function produces one screenshot (one per value when it uses `@PreviewParameter`). Make sure each one is rendered correctly and completely: open it in the IDE preview, or render it with `./gradlew :app:updateScreenshotTestDefaultDebugTestSuite` and look at the generated images.
+Every `@PreviewTest` function produces one screenshot (one per value when it uses `@PreviewParameter`). Make sure each one is rendered correctly and completely: open it in the IDE preview, or render it with `./gradlew :app:updateDebugScreenshotTestDefaultTestSuite` and look at the generated images.
 ### 9. Write Stateless Tests
 Each test should be independent and should not depend on other tests or the global state. Each test should be able to run on its own.
 
@@ -102,8 +102,8 @@ fun buttonStatesTest() = DesignScreenshot(
 This rule set covers the basic points to be considered when writing screenshot tests for components and guides test writers.
 
 *Gradle Commands:*
-- **Verify screenshots against the references:** ./gradlew :app:testScreenshotTestDefaultDebugTestSuite
-- **Render (record) the reference images:** ./gradlew :app:updateScreenshotTestDefaultDebugTestSuite
-- **Report:** app/build/reports/tests/testScreenshotTestDefaultDebugTestSuite/index.html
+- **Verify screenshots against the references:** ./gradlew :app:testDebugScreenshotTestDefaultTestSuite
+- **Render (record) the reference images:** ./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
+- **Report:** app/build/reports/tests/testDebugScreenshotTestDefaultTestSuite/index.html
 
 Verifying locally needs the real reference images, so install Git LFS and run `git lfs pull` first; without LFS the references are only pointer files.

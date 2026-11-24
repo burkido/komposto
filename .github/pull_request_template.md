@@ -133,10 +133,10 @@ Related to #<!-- issue number -->
 <!--- Document the commands used -->
 ```bash
 # Generate new screenshots
-./gradlew :app:updateScreenshotTestDefaultDebugTestSuite
+./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
 
 # Verify screenshots
-./gradlew :app:testScreenshotTestDefaultDebugTestSuite
+./gradlew :app:testDebugScreenshotTestDefaultTestSuite
 ```
 
 ### Screenshot Quality Checklist

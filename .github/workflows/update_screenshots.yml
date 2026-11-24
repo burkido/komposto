@@ -43,7 +43,7 @@ jobs:
         run: rm -rf app/src/screenshotTestDefaultDebug/reference/
 
       - name: Generate new screenshots
-        run: ./gradlew :app:updateScreenshotTestDefaultDebugTestSuite
+        run: ./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
 
       - name: Commit and push screenshots
         run: |

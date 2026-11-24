@@ -77,11 +77,11 @@ jobs:
         if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           rm -rf app/src/screenshotTestDefaultDebug/reference/
-          ./gradlew :app:updateScreenshotTestDefaultDebugTestSuite
+          ./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
 
       - name: Verify screenshots (fork)
         if: github.event.pull_request.head.repo.full_name != github.repository
-        run: ./gradlew :app:testScreenshotTestDefaultDebugTestSuite
+        run: ./gradlew :app:testDebugScreenshotTestDefaultTestSuite
 
       - name: Commit updated screenshots
         if: github.event.pull_request.head.repo.full_name == github.repository
@@ -104,8 +104,8 @@ jobs:
           name: screenshot-test-results
           path: |
             app/src/screenshotTestDefaultDebug/reference/
-            app/build/reports/tests/testScreenshotTestDefaultDebugTestSuite/
-            app/build/reports/tests/updateScreenshotTestDefaultDebugTestSuite/
+            app/build/reports/tests/testDebugScreenshotTestDefaultTestSuite/
+            app/build/reports/tests/updateDebugScreenshotTestDefaultTestSuite/
           retention-days: 7
 
   interaction-tests:

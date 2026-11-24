@@ -90,10 +90,10 @@ Thank you for your interest in contributing to Komposto, Trendyol's Android Desi
 ### Running Tests
 ```bash
 # Run screenshot tests (on the JVM, no emulator needed)
-./gradlew :app:testScreenshotTestDefaultDebugTestSuite
+./gradlew :app:testDebugScreenshotTestDefaultTestSuite
 
 # Render new screenshots (after UI changes)
-./gradlew :app:updateScreenshotTestDefaultDebugTestSuite
+./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
 
 # Run interaction tests (needs an emulator or device)
 ./gradlew :app:connectedDebugAndroidTest
@@ -104,7 +104,7 @@ Thank you for your interest in contributing to Komposto, Trendyol's Android Desi
 
 ### Screenshot Testing Guidelines
 - Screenshot tests must pass on our CI environment
-- Reference screenshots are generated and committed by CI; use `./gradlew :app:updateScreenshotTestDefaultDebugTestSuite` to check your changes locally
+- Reference screenshots are generated and committed by CI; use `./gradlew :app:updateDebugScreenshotTestDefaultTestSuite` to check your changes locally
 - Include before/after screenshots in your PR for visual changes
 - Cover different component states (default, focused, disabled, etc.)
 

@@ -79,7 +79,7 @@ Screenshot tests are managed via Gradle tasks and run on the JVM, so no emulator
 If you are adding a new component test or making intentional visual changes to an existing component, render the reference screenshots to check them. To render the screenshots of a single test file, use its file class name (the file name with a `Kt` suffix):
 
 ```bash
-./gradlew :app:updateScreenshotTestDefaultDebugTestSuite --tests 'price.SinglePriceTestKt'
+./gradlew :app:updateDebugScreenshotTestDefaultTestSuite --tests 'price.SinglePriceTestKt'
 ```
 
 This writes PNG files to `app/src/screenshotTestDefaultDebug/reference/`. Don't commit them: CI renders and commits the reference screenshots (stored in Git LFS).
@@ -89,7 +89,7 @@ This writes PNG files to `app/src/screenshotTestDefaultDebug/reference/`. Don't 
 To render new screenshots and compare them with the references:
 
 ```bash
-./gradlew :app:testScreenshotTestDefaultDebugTestSuite --tests 'price.SinglePriceTestKt'
+./gradlew :app:testDebugScreenshotTestDefaultTestSuite --tests 'price.SinglePriceTestKt'
 ```
 
-If there are any visual differences, the test fails and the report at `app/build/reports/tests/testScreenshotTestDefaultDebugTestSuite/index.html` shows the reference, the new image and the diff.
+If there are any visual differences, the test fails and the report at `app/build/reports/tests/testDebugScreenshotTestDefaultTestSuite/index.html` shows the reference, the new image and the diff.
