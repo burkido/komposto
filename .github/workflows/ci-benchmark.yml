@@ -1,8 +1,11 @@
 name: CI Benchmark (temporary)
 
-# Temporary, fork-only benchmark: the PR screenshot flow before (Shot, `main`) and after
-# (AGP screenshot test suite, this branch), 3 runs each on the same runners. The steps mirror
-# pr_jobs_screenshot_tests.yml without the app-token and commit-back steps, so nothing is pushed back.
+# Temporary, fork-only benchmark of the PR screenshot flow. Round 2:
+#   new-single-cold  new flow in ONE job (screenshots, then emulator + interaction tests), no Gradle cache
+#   new-single-warm  same job, Gradle cache restored
+#   old-warm         old Shot flow (main), Gradle cache restored, for a fair comparison
+# Warm jobs: run 0 is a warm-up that writes the Gradle cache; runs 1-3 only read it and are the measured ones.
+# Steps mirror pr_jobs_screenshot_tests.yml without the app-token and commit-back steps, so nothing is pushed back.
 # Delete this branch when done.
 
 on:
@@ -11,8 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Old flow on main (74ab68e): one job, emulator, Shot record, then interaction tests.
-  old-shot:
+  new-single-cold:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
@@ -20,6 +22,160 @@ jobs:
       max-parallel: 1
       matrix:
         run: [ 1, 2, 3 ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Gradle (no cache)
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-disabled: true
+
+      - name: Record screenshots
+        run: |
+          rm -rf app/src/screenshotTestDefaultDebug/reference/
+          ./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-32
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 32
+          arch: x86_64
+          profile: pixel_6
+          target: google_apis
+          avd-name: ubuntu-avd-x86_64-32
+          emulator-boot-timeout: 120
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run interaction tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 32
+          arch: x86_64
+          profile: pixel_6
+          target: google_apis
+          avd-name: ubuntu-avd-x86_64-32
+          emulator-boot-timeout: 120
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.annotation=core.InteractionTest
+
+  new-single-warm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        run: [ 0, 1, 2, 3 ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ matrix.run != 0 }}
+
+      - name: Record screenshots
+        run: |
+          rm -rf app/src/screenshotTestDefaultDebug/reference/
+          ./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-32
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 32
+          arch: x86_64
+          profile: pixel_6
+          target: google_apis
+          avd-name: ubuntu-avd-x86_64-32
+          emulator-boot-timeout: 120
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run interaction tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 32
+          arch: x86_64
+          profile: pixel_6
+          target: google_apis
+          avd-name: ubuntu-avd-x86_64-32
+          emulator-boot-timeout: 120
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.annotation=core.InteractionTest
+
+  old-warm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        run: [ 0, 1, 2, 3 ]
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -45,6 +201,8 @@ jobs:
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ matrix.run != 0 }}
 
       - name: AVD cache
         uses: actions/cache@v4
@@ -85,118 +243,6 @@ jobs:
           script: |
             rm -rf app/screenshots/debug/
             ./gradlew executeScreenshotTests -Precord
-
-      - name: Run interaction tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 32
-          arch: x86_64
-          profile: pixel_6
-          target: google_apis
-          avd-name: ubuntu-avd-x86_64-32
-          emulator-boot-timeout: 120
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.annotation=core.InteractionTest
-
-  # New flow, job 1 of 2: AGP screenshot test suite, no emulator.
-  new-screenshots:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        run: [ 1, 2, 3 ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: 'platform-tools'
-
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Record screenshots
-        run: |
-          rm -rf app/src/screenshotTestDefaultDebug/reference/
-          ./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
-
-      # Not part of the PR flow: kept to compare Linux renders between runs and with macOS.
-      - name: Upload references
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: new-references-run-${{ matrix.run }}
-          path: app/src/screenshotTestDefaultDebug/reference/
-          retention-days: 7
-
-  # New flow, job 2 of 2: interaction tests on the emulator, in parallel with job 1.
-  new-interaction:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        run: [ 1, 2, 3 ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: 'platform-tools'
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: AVD cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-32
-
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 32
-          arch: x86_64
-          profile: pixel_6
-          target: google_apis
-          avd-name: ubuntu-avd-x86_64-32
-          emulator-boot-timeout: 120
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
 
       - name: Run interaction tests
         uses: reactivecircus/android-emulator-runner@v2
