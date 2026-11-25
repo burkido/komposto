@@ -12,7 +12,7 @@ import com.trendyol.design.ui.theme.TrendyolTheme
 @Preview(
     showBackground = true,
     backgroundColor = 0xFFFAFAFA,
-    device = "spec:width=1080px,height=2295px,dpi=420",
+    device = "spec:width=1080px,height=2295px,dpi=420", // old Shot references had API 32 Pixel 6
 )
 annotation class DesignScreenshotPreview
 

@@ -35,6 +35,9 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # The default package list includes 'tools', which the SDK no longer serves.
+          packages: 'platform-tools'
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v4

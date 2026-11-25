@@ -12,34 +12,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  skip-check:
-    runs-on: ubuntu-latest
-    outputs:
-      skip: ${{ steps.skip-check.outputs.skip }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-
-      - name: Check if triggered by CI screenshot commit
-        id: skip-check
-        run: |
-          LATEST_MSG=$(git log -1 --pretty=format:'%s')
-          IS_SAME_REPO=${{ github.event.pull_request.head.repo.full_name == github.repository }}
-
-          if [[ "$LATEST_MSG" == "Update screenshots from CI" && "$IS_SAME_REPO" == "true" ]]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
-            echo "Skipping - triggered by CI screenshot update"
-          else
-            echo "skip=false" >> $GITHUB_OUTPUT
-          fi
-
-  # Host-side Compose Preview screenshot tests (AGP test suite + Layoutlib). No emulator needed.
-  screenshot-tests:
-    needs: skip-check
-    if: needs.skip-check.outputs.skip != 'true'
+  # One job: host-side screenshot tests (AGP test suite + Layoutlib, no emulator) first, then the
+  # interaction tests on an emulator. A single runner sets up the checkout, SDK and Gradle build once.
+  screenshot-and-interaction-tests:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -61,83 +36,56 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           lfs: true
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Record screenshots (same repo)
-        if: github.event.pull_request.head.repo.full_name == github.repository
+      - name: Check if triggered by CI screenshot commit
+        id: skip-check
         run: |
-          rm -rf app/src/screenshotTestDefaultDebug/reference/
-          ./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
+          LATEST_MSG=$(git log -1 --pretty=format:'%s')
+          IS_SAME_REPO=${{ github.event.pull_request.head.repo.full_name == github.repository }}
 
-      - name: Verify screenshots (fork)
-        if: github.event.pull_request.head.repo.full_name != github.repository
-        run: ./gradlew :app:testDebugScreenshotTestDefaultTestSuite
-
-      - name: Commit updated screenshots
-        if: github.event.pull_request.head.repo.full_name == github.repository
-        run: |
-          git config --local user.email "ci@github.actions.com"
-          git config --local user.name "GitHub Actions"
-          git add app/src/screenshotTestDefaultDebug/reference/
-          if git diff --staged --quiet; then
-            echo "No screenshot changes detected"
+          if [[ "$LATEST_MSG" == "Update screenshots from CI" && "$IS_SAME_REPO" == "true" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Skipping - triggered by CI screenshot update"
           else
-            git commit -m "Update screenshots from CI"
-            git push
-            echo "Screenshots updated and pushed"
+            echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Upload Screenshot Results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshot-test-results
-          path: |
-            app/src/screenshotTestDefaultDebug/reference/
-            app/build/reports/tests/testDebugScreenshotTestDefaultTestSuite/
-            app/build/reports/tests/updateDebugScreenshotTestDefaultTestSuite/
-          retention-days: 7
-
-  interaction-tests:
-    needs: skip-check
-    if: needs.skip-check.outputs.skip != 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-
       - name: Set up JDK
+        if: steps.skip-check.outputs.skip != 'true'
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
       - name: Setup Android SDK
+        if: steps.skip-check.outputs.skip != 'true'
         uses: android-actions/setup-android@v3
+        with:
+          # The default package list includes 'tools', which the SDK no longer serves.
+          packages: 'platform-tools'
 
       - name: Enable KVM
+        if: steps.skip-check.outputs.skip != 'true'
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
       - name: Gradle cache
+        if: steps.skip-check.outputs.skip != 'true'
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Record screenshots (same repo)
+        if: steps.skip-check.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          rm -rf app/src/screenshotTestDefaultDebug/reference/
+          ./gradlew :app:updateDebugScreenshotTestDefaultTestSuite
+
+      - name: Verify screenshots (fork)
+        if: steps.skip-check.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name != github.repository
+        run: ./gradlew :app:testDebugScreenshotTestDefaultTestSuite
+
       - name: AVD cache
+        if: steps.skip-check.outputs.skip != 'true'
         uses: actions/cache@v4
         id: avd-cache
         with:
@@ -147,7 +95,7 @@ jobs:
           key: avd-32
 
       - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
+        if: steps.skip-check.outputs.skip != 'true' && steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 32
@@ -162,6 +110,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Run interaction tests
+        if: steps.skip-check.outputs.skip != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 32
@@ -175,8 +124,35 @@ jobs:
           disable-animations: true
           script: ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.annotation=core.InteractionTest
 
+      # Last on purpose: the push starts a new run of this workflow, and cancel-in-progress would
+      # cancel this one if it were still running the interaction tests.
+      - name: Commit updated screenshots
+        if: steps.skip-check.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          git config --local user.email "ci@github.actions.com"
+          git config --local user.name "GitHub Actions"
+          git add app/src/screenshotTestDefaultDebug/reference/
+          if git diff --staged --quiet; then
+            echo "No screenshot changes detected"
+          else
+            git commit -m "Update screenshots from CI"
+            git push
+            echo "Screenshots updated and pushed"
+          fi
+
+      - name: Upload Screenshot Results
+        if: always() && steps.skip-check.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-test-results
+          path: |
+            app/src/screenshotTestDefaultDebug/reference/
+            app/build/reports/tests/testDebugScreenshotTestDefaultTestSuite/
+            app/build/reports/tests/updateDebugScreenshotTestDefaultTestSuite/
+          retention-days: 7
+
       - name: Upload Interaction Test Results
-        if: always()
+        if: always() && steps.skip-check.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: interaction-test-results
